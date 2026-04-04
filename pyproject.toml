@@ -1,0 +1,36 @@
+[project]
+name = "fetch-market-data"
+version = "0.1.0"
+description = "Fetch current stock prices for US and Japanese stocks via yfinance"
+readme = "README.md"
+authors = [
+    { name = "trippy" }
+]
+requires-python = ">=3.12"
+dependencies = ["yfinance>=0.2"]
+
+[project.scripts]
+fetch-market-data = "fetch_market_data.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.9"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[build-system]
+requires = ["uv_build>=0.8.3,<0.9.0"]
+build-backend = "uv_build"
