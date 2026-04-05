@@ -1,3 +1,5 @@
+**Language:** 日本語 | [English](README.en.md)
+
 # fetch-market-data
 
 米国株・日本株のティッカーシンボルを引数として渡し、指定した指標をJSON形式で返すCLIツール。
