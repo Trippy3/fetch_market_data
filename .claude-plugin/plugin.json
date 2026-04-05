@@ -1,6 +1,6 @@
 {
   "name": "fetch-market-data",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Stock market data fetcher for US and Japanese equities. Provides a CLI tool and Agent Skill for retrieving price, valuation, financial statement, and analyst metrics via yfinance.",
   "author": {
     "name": "Trippy3"

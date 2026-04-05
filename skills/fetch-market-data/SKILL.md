@@ -1,7 +1,7 @@
 ---
 name: fetch-market-data
 description: This skill should be used when the user asks to "fetch stock data", "get financial metrics for a ticker", "retrieve market data", "analyze stock valuation", "check a company's financials", "get dividend yield", "look up PE ratio", "run fetch-market-data", or any task involving equity data for US or Japanese stocks.
-version: 1.0.0
+version: 1.1.0
 ---
 
 # fetch-market-data Skill
