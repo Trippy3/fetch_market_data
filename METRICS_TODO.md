@@ -74,7 +74,7 @@
 | グロスマージン | `--gross-margin` | `income_stmt` から計算（Gross Profit / Revenue） |
 
 - [x] `--revenue`
-- [ ] `--revenue-estimate`
+- [x] `--revenue-estimate`
 - [x] `--revenue-growth`
 - [x] `--operating-income`
 - [x] `--operating-margin`
