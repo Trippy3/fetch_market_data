@@ -70,6 +70,24 @@ Always outputs a JSON object to **stdout**, keyed by ticker symbol:
 | `price`, `market-cap`, `revenue`, etc. | absolute | `213.49` | currency units |
 | `buyback` | absolute, usually negative | `-89000000000` | cash outflow |
 
+## Available Metric Categories
+
+> **Full option list with descriptions**: See `references/metrics-reference.md`.
+> The analysis patterns below cover common use cases only — not all 48 options are shown.
+
+| Category | Key options |
+|----------|-------------|
+| Price & Market | `--price` `--price-change` `--price-change-pct` `--weekly-change` `--monthly-change` `--week52-high` `--week52-low` `--volume` `--avg-volume` `--market-cap` |
+| Valuation | `--trailing-pe` `--forward-pe` `--pbr` `--psr` `--peg` `--ev-ebitda` `--dividend-yield` `--payout-ratio` |
+| Income Statement | `--revenue` `--revenue-growth` `--operating-income` `--operating-margin` `--gross-margin` `--net-income` `--trailing-eps` `--forward-eps` |
+| Balance Sheet | `--cash` `--goodwill` `--intangible-assets` `--equity-ratio` `--debt-ebitda` |
+| Cash Flow | `--operating-cf` `--fcf` `--fcf-margin` `--buyback` |
+| Profitability & Risk | `--roe` `--roa` `--beta` |
+| Shareholder Returns | `--dividend-history` `--dividend-growth` `--total-return-ratio` |
+| Analyst | `--price-target` `--ratings` `--eps-estimate` `--revenue-estimate` |
+| Events | `--next-earnings` `--guidance` |
+| Insider | `--insider-trades` `--major-holders` |
+
 ## Analysis Patterns
 
 All examples use the full `uvx` invocation. Replace `uvx --from git+https://github.com/Trippy3/fetch_market_data fetch-market-data` with `uv run fetch-market-data` if running from the cloned repository.
@@ -122,6 +140,18 @@ uvx --from git+https://github.com/Trippy3/fetch_market_data fetch-market-data AA
   --price --trailing-pe --pbr --roe --dividend-yield
 ```
 
+### Balance sheet & M&A risk
+```bash
+uvx --from git+https://github.com/Trippy3/fetch_market_data fetch-market-data GENDA 4385.T \
+  --goodwill --intangible-assets --equity-ratio --debt-ebitda --cash
+```
+
+### Market context
+```bash
+uvx --from git+https://github.com/Trippy3/fetch_market_data fetch-market-data AAPL MSFT \
+  --price --week52-high --week52-low --volume --avg-volume --beta
+```
+
 ## Error Handling
 
 | Situation | What you see | Action |
@@ -153,4 +183,4 @@ Some metrics return nested JSON instead of a scalar:
 
 ## Full Metrics Reference
 
-See `references/metrics-reference.md` for the complete list of all 48 supported options.
+See `references/metrics-reference.md` for the complete list of all 48 supported options with descriptions, return types, and source speed.
