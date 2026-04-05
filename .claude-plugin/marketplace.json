@@ -1,0 +1,16 @@
+{
+  "name": "fetch-market-data-marketplace",
+  "owner": { "name": "Trippy3" },
+  "plugins": [
+    {
+      "name": "fetch-market-data",
+      "source": {
+        "source": "github",
+        "repo": "Trippy3/fetch_market_data"
+      },
+      "description": "Stock market data fetcher for US and Japanese equities via yfinance. Returns price, valuation, financials, and analyst metrics as JSON.",
+      "version": "1.0.0",
+      "category": "productivity"
+    }
+  ]
+}

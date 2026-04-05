@@ -11,7 +11,11 @@
 このリポジトリは Claude Code Plugin として配布されています。インストールすることで AI エージェントがこのツールを自律的に使いこなせる Skill が利用可能になります。
 
 ```bash
-claude plugin install github:Trippy3/fetch_market_data
+# 1. マーケットプレイスを登録
+claude plugin marketplace add Trippy3/fetch_market_data
+
+# 2. プラグインをインストール
+claude plugin install fetch-market-data@fetch-market-data-marketplace
 ```
 
 ## 要件
