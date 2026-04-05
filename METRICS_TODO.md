@@ -28,10 +28,10 @@
 - [x] `--volume`
 - [x] `--avg-volume`
 - [x] `--market-cap`
-- [ ] `--price-change`
-- [ ] `--price-change-pct`
-- [ ] `--weekly-change`
-- [ ] `--monthly-change`
+- [x] `--price-change`
+- [x] `--price-change-pct`
+- [x] `--weekly-change`
+- [x] `--monthly-change`
 
 ---
 
@@ -75,13 +75,13 @@
 
 - [x] `--revenue`
 - [ ] `--revenue-estimate`
-- [ ] `--revenue-growth`
+- [x] `--revenue-growth`
 - [x] `--operating-income`
-- [ ] `--operating-margin`
+- [x] `--operating-margin`
 - [x] `--net-income`
 - [x] `--trailing-eps`
 - [x] `--forward-eps`
-- [ ] `--gross-margin`
+- [x] `--gross-margin`
 
 ---
 
@@ -98,8 +98,8 @@
 - [x] `--cash`
 - [x] `--goodwill`
 - [x] `--intangible-assets`
-- [ ] `--equity-ratio`
-- [ ] `--debt-ebitda`
+- [x] `--equity-ratio`
+- [x] `--debt-ebitda`
 
 ---
 
@@ -113,7 +113,7 @@
 
 - [x] `--operating-cf`
 - [x] `--fcf`
-- [ ] `--fcf-margin`
+- [x] `--fcf-margin`
 
 ---
 
@@ -143,11 +143,11 @@
 | RPO / ARR / NRR | `-` | Yahoo Finance非対応 |
 | 受注残・バックログ | `-` | Yahoo Finance非対応 |
 
-- [ ] `--guidance`
-- [ ] `--eps-estimate`
-- [ ] `--revenue-estimate`
-- [ ] `--price-target`
-- [ ] `--ratings`
+- [x] `--guidance`
+- [x] `--eps-estimate`
+- [x] `--revenue-estimate`
+- [x] `--price-target`
+- [x] `--ratings`
 - [-] RPO / ARR / NRR（Yahoo Finance非対応）
 - [-] 受注残・バックログ（Yahoo Finance非対応）
 
@@ -163,10 +163,10 @@
 | 総還元性向 | `--total-return-ratio` | （配当 + 自己株買い）/ 純利益で計算 |
 | 消却有無 | `-` | Yahoo Finance非対応 |
 
-- [ ] `--dividend-history`
-- [ ] `--dividend-growth`
-- [ ] `--buyback`
-- [ ] `--total-return-ratio`
+- [x] `--dividend-history`
+- [x] `--dividend-growth`
+- [x] `--buyback`
+- [x] `--total-return-ratio`
 - [-] 消却有無（Yahoo Finance非対応）
 
 ---
@@ -184,9 +184,9 @@
 | 競合他社の動向 | `-` | Yahoo Finance非対応 |
 | マクロ感応度（詳細） | `-` | Yahoo Finance非対応（ベータ値のみ取得可） |
 
-- [ ] `--next-earnings`
-- [ ] `--insider-trades`
-- [ ] `--major-holders`
+- [x] `--next-earnings`
+- [x] `--insider-trades`
+- [x] `--major-holders`
 - [x] `--beta`
 - [-] 重要イベント（Yahoo Finance非対応）
 - [-] 訴訟・規制リスク（Yahoo Finance非対応）

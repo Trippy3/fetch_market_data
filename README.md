@@ -2,6 +2,10 @@
 
 米国株・日本株のティッカーシンボルを引数として渡し、指定した指標をJSON形式で返すCLIツール。
 
+## 概要
+
+株価データの取得には [yfinance](https://github.com/ranaroussi/yfinance) を使用しています。Yahoo Finance のデータを Python から利用できる非公式ライブラリです。
+
 ## 要件
 
 - [uv](https://github.com/astral-sh/uv) がインストールされていること
@@ -79,6 +83,10 @@ fetch-market-data 7203.T 6758.T --price --pbr --roe
 | `--week52-high` | 52週高値 |
 | `--week52-low` | 52週安値 |
 | `--market-cap` | 時価総額 |
+| `--price-change` | 前日比（金額） |
+| `--price-change-pct` | 前日比（%、小数） |
+| `--weekly-change` | 週足変化率（小数） |
+| `--monthly-change` | 月足変化率（小数） |
 
 ### バリュエーション
 
@@ -98,15 +106,21 @@ fetch-market-data 7203.T 6758.T --price --pbr --roe
 | オプション | 説明 |
 |---|---|
 | `--revenue` | 売上高（直近年度） |
+| `--revenue-growth` | 売上高YoY成長率（小数） |
 | `--operating-income` | 営業利益（直近年度） |
+| `--operating-margin` | 営業利益率（小数） |
+| `--gross-margin` | 売上総利益率（小数） |
 | `--net-income` | 純利益（直近年度） |
 | `--trailing-eps` | EPS（実績） |
 | `--forward-eps` | EPS（予想） |
 | `--cash` | 現金・現金同等物 |
 | `--goodwill` | のれん |
 | `--intangible-assets` | 無形資産 |
+| `--equity-ratio` | 自己資本比率（小数） |
+| `--debt-ebitda` | 有利子負債/EBITDA |
 | `--operating-cf` | 営業キャッシュフロー |
 | `--fcf` | フリーキャッシュフロー |
+| `--fcf-margin` | FCFマージン（小数） |
 
 ### 収益性・リスク
 
@@ -115,6 +129,33 @@ fetch-market-data 7203.T 6758.T --price --pbr --roe
 | `--roe` | ROE |
 | `--roa` | ROA |
 | `--beta` | ベータ値 |
+
+### 株主還元
+
+| オプション | 説明 |
+|---|---|
+| `--buyback` | 自己株買い金額（直近年度、通常負値） |
+| `--dividend-history` | 配当履歴（日付→金額のJSON） |
+| `--dividend-growth` | 増配率・YoY（小数） |
+| `--total-return-ratio` | 総還元性向（配当＋自己株買い）/純利益 |
+
+### 成長・アナリストデータ
+
+| オプション | 説明 |
+|---|---|
+| `--eps-estimate` | アナリストEPS予想（DataFrame形式のJSON） |
+| `--revenue-estimate` | アナリスト売上予想（DataFrame形式のJSON） |
+| `--price-target` | アナリスト目標株価（min/mean/max等のJSON） |
+| `--ratings` | レーティング分布（buy/hold/sell等のJSON） |
+
+### イベント・定性情報
+
+| オプション | 説明 |
+|---|---|
+| `--guidance` | 業績ガイダンス・カレンダー情報（JSON） |
+| `--next-earnings` | 次回決算発表予定日 |
+| `--insider-trades` | インサイダー取引履歴（JSON） |
+| `--major-holders` | 大株主保有状況（JSON） |
 
 ## 開発
 
@@ -165,8 +206,11 @@ uv run ruff check src/ tests/ && uv run ruff format --check src/ tests/
 _METRICS: dict[str, MetricDef] = {
     # 既存の指標 ...
 
-    # 新しい指標を追加（例: PEG比率を別ソースから取得）
-    "new-metric": MetricDef("info", lambda d: d.get("someKey")),
+    # 新しい指標を追加（例: 単一ソース）
+    "new-metric": MetricDef(("info",), lambda d: d.get("someKey")),
+
+    # 複数ソースが必要な指標（例: balance_sheet と income_stmt から計算）
+    "cross-metric": MetricDef(("balance_sheet", "income_stmt"), lambda bs, inc: ...),
 }
 ```
 
@@ -181,3 +225,11 @@ _METRICS: dict[str, MetricDef] = {
 | `income_stmt` | 損益計算書（年次/四半期） | 遅い |
 | `balance_sheet` | 貸借対照表（年次/四半期） | 遅い |
 | `cashflow` | キャッシュフロー計算書（年次/四半期） | 遅い |
+| `history_2d` / `history_5d` / `history_1mo` | 価格履歴（期間指定） | 普通 |
+| `dividends` | 配当履歴 Series | 普通 |
+| `calendar` | 決算予定・ガイダンス dict | 普通 |
+| `earnings_estimate` / `revenue_estimate` | アナリスト予想 DataFrame | 普通 |
+| `analyst_price_targets` | 目標株価 dict | 普通 |
+| `recommendations_summary` | レーティング分布 DataFrame | 普通 |
+| `insider_transactions` | インサイダー取引 DataFrame | 遅い |
+| `major_holders` | 大株主 DataFrame | 遅い |
