@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import math
 import sys
 from collections.abc import Callable
@@ -179,6 +180,10 @@ def _to_json_safe(value: Any) -> Any:
     to a JSON-serialisable Python structure."""
     if value is None:
         return None
+    if isinstance(value, datetime.datetime):
+        return value.isoformat()
+    if isinstance(value, datetime.date):
+        return value.isoformat()
     if _HAS_PANDAS:
         if isinstance(value, pd.Timestamp):
             return value.isoformat()

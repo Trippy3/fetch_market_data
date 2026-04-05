@@ -115,6 +115,16 @@ class TestToJsonSafe:
         result = _to_json_safe(ts)
         assert result == "2024-01-15T00:00:00"
 
+    def test_datetime_date_to_isoformat(self):
+        import datetime
+        d = datetime.date(2026, 5, 7)
+        assert _to_json_safe(d) == "2026-05-07"
+
+    def test_datetime_datetime_to_isoformat(self):
+        import datetime
+        dt = datetime.datetime(2026, 5, 7, 14, 30, 0)
+        assert _to_json_safe(dt) == "2026-05-07T14:30:00"
+
     def test_string_passthrough(self):
         assert _to_json_safe("hello") == "hello"
 
