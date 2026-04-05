@@ -6,6 +6,14 @@
 
 株価データの取得には [yfinance](https://github.com/ranaroussi/yfinance) を使用しています。Yahoo Finance のデータを Python から利用できる非公式ライブラリです。
 
+## Claude Code Plugin
+
+このリポジトリは Claude Code Plugin として配布されています。インストールすることで AI エージェントがこのツールを自律的に使いこなせる Skill が利用可能になります。
+
+```bash
+claude plugin install github:Trippy3/fetch_market_data
+```
+
 ## 要件
 
 - [uv](https://github.com/astral-sh/uv) がインストールされていること
