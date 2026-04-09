@@ -2,7 +2,12 @@
 
 # fetch-market-data
 
-A CLI tool that accepts US and Japanese stock ticker symbols and returns specified metrics in JSON format.
+A package providing two CLI tools for US and Japanese equities.
+
+| Tool | Purpose |
+|------|---------|
+| `fetch-market-data` | Fetch metrics for given ticker symbols, returned as JSON |
+| `screen-market-data` | Screen stocks by conditions, returns matching ticker list as JSON |
 
 ## Overview
 
@@ -27,14 +32,21 @@ claude plugin install fetch-market-data@fetch-market-data-marketplace
 ## Run without installing (uvx)
 
 ```bash
+# Run directly from GitHub
 uvx --from git+https://github.com/Trippy3/fetch_market_data fetch-market-data AAPL MSFT 7203.T
+uvx --from git+https://github.com/Trippy3/fetch_market_data screen-market-data --region jp --roe-min 10
+
+# Local development (add --reinstall after changes)
+uvx --from . --reinstall fetch-market-data AAPL --price
+uvx --from . screen-market-data --region jp --roe-min 10
 ```
 
-## Usage
+## fetch-market-data Usage
 
 ```
 fetch-market-data SYMBOL [SYMBOL ...] [--price] [--market-cap] [--trailing-pe] ...
 ```
+
 
 If no metric option is given, `--price` is applied by default. Multiple metrics can be specified at once.
 
@@ -170,6 +182,82 @@ Outputs a JSON object keyed by ticker symbol to `stdout`.
 | `--next-earnings` | Next earnings date |
 | `--insider-trades` | Insider transaction history (JSON) |
 | `--major-holders` | Major shareholders (JSON) |
+
+## screen-market-data Usage
+
+Screen stocks by combining multiple conditions and returns a JSON list of matching ticker symbols.
+
+```
+screen-market-data (--region jp|us | --exchange nasdaq|nyse|us) [filter options]
+```
+
+Either `--region` or `--exchange` is required.
+
+### Examples
+
+```bash
+# Japanese stocks: ROE 10%+, dividend yield 1.5%+, 3+ years consecutive dividend growth
+screen-market-data --region jp --roe-min 10 --div-yield-min 1.5 --div-growth-years 3
+
+# US NASDAQ: revenue growth 15%+, gross margin 50%+, positive FCF
+screen-market-data --exchange nasdaq --revenue-growth-min 15 --gross-margin-min 50 --fcf-positive
+
+# US NYSE+NASDAQ Technology sector, insider ownership 5%+, top 20
+screen-market-data --region us --sector Technology --insider-min 5 --size 20
+
+# NYSE: PEG ratio below 1.0, Debt/EBITDA below 5x
+screen-market-data --exchange nyse --peg-max 1.0 --debt-ebitda-max 5
+```
+
+### Output Format
+
+```json
+{
+  "query": {
+    "region": "jp",
+    "exchange": null,
+    "conditions": {
+      "roe_min": 10.0,
+      "div_yield_min": 1.5,
+      "div_growth_years": 3
+    }
+  },
+  "count": 5,
+  "tickers": ["7203.T", "8031.T", "8035.T", "8001.T", "8766.T"]
+}
+```
+
+### Filter Options
+
+| Option | Description | Market |
+|--------|-------------|--------|
+| `--roe-min PCT` | Minimum ROE (%) | JP / US |
+| `--div-yield-min PCT` | Minimum forward dividend yield (%) | JP / US |
+| `--div-growth-years N` | Minimum consecutive years of dividend growth | JP / US |
+| `--revenue-growth-min PCT` | Minimum YoY revenue growth (%) | JP / US |
+| `--debt-ebitda-max RATIO` | Maximum Total Debt / EBITDA | JP / US |
+| `--fcf-positive` | Require positive free cash flow | JP / US |
+| `--gross-margin-min PCT` | Minimum gross margin (%) | JP / US |
+| `--peg-max RATIO` | Maximum PEG ratio | JP / US |
+| `--insider-min PCT` | Minimum insider ownership (%) | JP / US |
+| `--market-cap-min VALUE` | Minimum market cap (JPY or USD) | JP / US |
+| `--sector SECTOR` | Sector filter (e.g. Technology) | JP / US |
+| `--size N` | Maximum number of results (default: 50) | JP / US |
+| `--sort-by FIELD` | Sort field (default: intradaymarketcap) | JP / US |
+| `--sort-asc` | Sort ascending (default: descending) | JP / US |
+
+> **Note**: Filtering by TSE market segment (Prime / Standard / Growth) is not currently supported.
+> The yfinance screener API does not distinguish between segments; `--region jp` targets the entire TSE.
+
+### Recommended Workflow
+
+```bash
+# Step 1: narrow candidates with screen-market-data
+screen-market-data --region jp --roe-min 10 --div-yield-min 1.5 --div-growth-years 3
+
+# Step 2: fetch detailed metrics with fetch-market-data
+fetch-market-data 7203.T 8031.T --payout-ratio --equity-ratio --operating-margin --price-target
+```
 
 ## Development
 

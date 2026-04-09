@@ -2,7 +2,12 @@
 
 # fetch-market-data
 
-米国株・日本株のティッカーシンボルを引数として渡し、指定した指標をJSON形式で返すCLIツール。
+米国株・日本株向けの2つのCLIツールを提供するパッケージです。
+
+| ツール | 用途 |
+|--------|------|
+| `fetch-market-data` | ティッカーシンボルを指定して指標をJSON取得 |
+| `screen-market-data` | 条件を指定して銘柄をスクリーニング、ティッカーリストをJSON取得 |
 
 ## 概要
 
@@ -27,14 +32,21 @@ claude plugin install fetch-market-data@fetch-market-data-marketplace
 ## インストール不要で実行 (uvx)
 
 ```bash
-uvx --from . fetch-market-data AAPL MSFT 7203.T
+# GitHub から直接実行
+uvx --from git+https://github.com/Trippy3/fetch_market_data fetch-market-data AAPL MSFT 7203.T
+uvx --from git+https://github.com/Trippy3/fetch_market_data screen-market-data --region jp --roe-min 10
+
+# ローカル開発時（変更後は --reinstall を付ける）
+uvx --from . --reinstall fetch-market-data AAPL --price
+uvx --from . screen-market-data --region jp --roe-min 10
 ```
 
-## 使い方
+## fetch-market-data の使い方
 
 ```
 fetch-market-data SYMBOL [SYMBOL ...] [--price] [--market-cap] [--trailing-pe] ...
 ```
+
 
 指標オプションを省略した場合は `--price` がデフォルトで適用されます。複数の指標を同時に指定できます。
 
@@ -170,6 +182,82 @@ fetch-market-data 7203.T 6758.T --price --pbr --roe
 | `--next-earnings` | 次回決算発表予定日 |
 | `--insider-trades` | インサイダー取引履歴（JSON） |
 | `--major-holders` | 大株主保有状況（JSON） |
+
+## screen-market-data の使い方
+
+条件を組み合わせて銘柄をスクリーニングし、ティッカーシンボルの一覧をJSON形式で返します。
+
+```
+screen-market-data (--region jp|us | --exchange nasdaq|nyse|us) [フィルタオプション]
+```
+
+`--region` と `--exchange` はいずれか一方が必須です。
+
+### 例
+
+```bash
+# 国内株: ROE 10%以上, 配当利回り 1.5%以上, 連続増配 3年以上
+screen-market-data --region jp --roe-min 10 --div-yield-min 1.5 --div-growth-years 3
+
+# 米国 NASDAQ: 売上成長 15%以上, 粗利率 50%以上, FCF プラス
+screen-market-data --exchange nasdaq --revenue-growth-min 15 --gross-margin-min 50 --fcf-positive
+
+# 米国 NYSE+NASDAQ テックセクター, インサイダー保有 5%以上, 上位 20 件
+screen-market-data --region us --sector Technology --insider-min 5 --size 20
+
+# NYSE: PEGレシオ 1.0未満, 有利子負債/EBITDA 5倍以下
+screen-market-data --exchange nyse --peg-max 1.0 --debt-ebitda-max 5
+```
+
+### 出力形式
+
+```json
+{
+  "query": {
+    "region": "jp",
+    "exchange": null,
+    "conditions": {
+      "roe_min": 10.0,
+      "div_yield_min": 1.5,
+      "div_growth_years": 3
+    }
+  },
+  "count": 5,
+  "tickers": ["7203.T", "8031.T", "8035.T", "8001.T", "8766.T"]
+}
+```
+
+### フィルタオプション一覧
+
+| オプション | 説明 | 対応市場 |
+|-----------|------|---------|
+| `--roe-min PCT` | ROE 下限（%） | JP / US |
+| `--div-yield-min PCT` | 配当利回り下限（%） | JP / US |
+| `--div-growth-years N` | 連続増配年数下限 | JP / US |
+| `--revenue-growth-min PCT` | 売上成長率 YoY 下限（%） | JP / US |
+| `--debt-ebitda-max RATIO` | 有利子負債/EBITDA 上限 | JP / US |
+| `--fcf-positive` | FCF プラスのみ | JP / US |
+| `--gross-margin-min PCT` | 粗利率下限（%） | JP / US |
+| `--peg-max RATIO` | PEGレシオ上限 | JP / US |
+| `--insider-min PCT` | インサイダー保有比率下限（%） | JP / US |
+| `--market-cap-min VALUE` | 時価総額下限（JPY or USD） | JP / US |
+| `--sector SECTOR` | セクター指定（例: Technology） | JP / US |
+| `--size N` | 取得件数上限（デフォルト: 50） | JP / US |
+| `--sort-by FIELD` | ソートフィールド（デフォルト: intradaymarketcap） | JP / US |
+| `--sort-asc` | 昇順ソート（デフォルト: 降順） | JP / US |
+
+> **注意**: 東証プライム・スタンダード・グロースの市場区分指定は現時点では非対応です。
+> yfinance のスクリーナーAPIが市場区分を区別しないため、`--region jp` で東証全体を対象とします。
+
+### 推奨ワークフロー
+
+```bash
+# Step 1: screen-market-data で候補銘柄を絞る
+screen-market-data --region jp --roe-min 10 --div-yield-min 1.5 --div-growth-years 3
+
+# Step 2: fetch-market-data で詳細指標を確認
+fetch-market-data 7203.T 8031.T --payout-ratio --equity-ratio --operating-margin --price-target
+```
 
 ## 開発
 

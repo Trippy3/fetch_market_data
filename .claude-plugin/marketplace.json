@@ -8,8 +8,8 @@
         "source": "github",
         "repo": "Trippy3/fetch_market_data"
       },
-      "description": "Stock market data fetcher for US and Japanese equities via yfinance. Returns price, valuation, financials, and analyst metrics as JSON.",
-      "version": "1.1.0",
+      "description": "Stock market data and screener for US and Japanese equities via yfinance. fetch-market-data returns metrics by ticker; screen-market-data filters stocks by financial conditions and returns matching tickers.",
+      "version": "1.2.0",
       "category": "productivity"
     }
   ]

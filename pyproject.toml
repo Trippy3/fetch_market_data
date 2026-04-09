@@ -11,6 +11,7 @@ dependencies = ["yfinance>=0.2"]
 
 [project.scripts]
 fetch-market-data = "fetch_market_data.cli:main"
+screen-market-data = "fetch_market_data.screen_cli:main"
 
 [dependency-groups]
 dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.9"]

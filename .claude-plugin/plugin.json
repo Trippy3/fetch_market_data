@@ -1,11 +1,11 @@
 {
   "name": "fetch-market-data",
-  "version": "1.1.0",
-  "description": "Stock market data fetcher for US and Japanese equities. Provides a CLI tool and Agent Skill for retrieving price, valuation, financial statement, and analyst metrics via yfinance.",
+  "version": "1.2.0",
+  "description": "Stock market data and screener for US and Japanese equities. Provides two CLI tools: fetch-market-data (metric lookup by ticker) and screen-market-data (equity screener by financial conditions). Agent Skills included for both tools.",
   "author": {
     "name": "Trippy3"
   },
   "repository": "https://github.com/Trippy3/fetch_market_data",
   "license": "MIT",
-  "keywords": ["stock", "finance", "market-data", "yfinance", "equity", "japan", "us-stocks"]
+  "keywords": ["stock", "finance", "market-data", "screener", "yfinance", "equity", "japan", "us-stocks"]
 }
