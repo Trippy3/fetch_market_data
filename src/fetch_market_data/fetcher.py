@@ -299,6 +299,9 @@ _METRICS: dict[str, MetricDef] = {
     "revenue-growth": MetricDef(
         ("income_stmt",), lambda d: _stmt_yoy_growth(d, "Total Revenue")
     ),
+    # TTM revenue growth from info (same data source as screen-market-data's EquityQuery field
+    # totalrevenues1yrgrowth.lasttwelvemonths — use this for apples-to-apples comparison)
+    "revenue-growth-ttm": MetricDef(("info",), lambda d: d.get("revenueGrowth")),
     "operating-margin": MetricDef(
         ("income_stmt",), lambda d: _stmt_ratio(d, "Operating Income", "Total Revenue")
     ),

@@ -191,6 +191,20 @@ class TestInfoMetrics:
         assert result["AAPL"]["fcf"] == 90_000_000_000
 
     @patch("fetch_market_data.fetcher.yf.Tickers")
+    def test_revenue_growth_ttm(self, mock_cls):
+        ticker = _make_ticker(info=_make_info(revenueGrowth=0.076))
+        mock_cls.return_value = _make_tickers({"AAPL": ticker})
+        result = fetch_metrics(["AAPL"], ["revenue-growth-ttm"])
+        assert result["AAPL"]["revenue-growth-ttm"] == round(0.076, 4)
+
+    @patch("fetch_market_data.fetcher.yf.Tickers")
+    def test_revenue_growth_ttm_missing_returns_none(self, mock_cls):
+        ticker = _make_ticker(info={})
+        mock_cls.return_value = _make_tickers({"AAPL": ticker})
+        result = fetch_metrics(["AAPL"], ["revenue-growth-ttm"])
+        assert result["AAPL"]["revenue-growth-ttm"] is None
+
+    @patch("fetch_market_data.fetcher.yf.Tickers")
     def test_missing_info_key_returns_none(self, mock_cls):
         ticker = _make_ticker(info={})  # empty info dict
         mock_cls.return_value = _make_tickers({"AAPL": ticker})

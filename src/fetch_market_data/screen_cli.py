@@ -74,6 +74,8 @@ Examples:
     out = parser.add_argument_group("output control")
     out.add_argument("--size", type=int, default=50, metavar="N",
                      help="Maximum number of results to return (default: 50)")
+    out.add_argument("--offset", type=int, default=0, metavar="N",
+                     help="Starting index for pagination (default: 0)")
     out.add_argument("--sort-by", default="intradaymarketcap", metavar="FIELD",
                      help="EquityQuery field to sort by (default: intradaymarketcap)")
     out.add_argument("--sort-asc", action="store_true",
@@ -101,6 +103,7 @@ def main() -> None:
         market_cap_min=args.market_cap_min,
         sector=args.sector,
         size=args.size,
+        offset=args.offset,
         sort_by=args.sort_by,
         sort_asc=args.sort_asc,
     )

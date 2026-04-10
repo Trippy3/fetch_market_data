@@ -73,6 +73,7 @@ class TestParser:
     def test_output_defaults(self):
         args = self.parser.parse_args(["--region", "jp"])
         assert args.size == 50
+        assert args.offset == 0
         assert args.sort_by == "intradaymarketcap"
         assert args.sort_asc is False
 
@@ -80,10 +81,12 @@ class TestParser:
         args = self.parser.parse_args([
             "--region", "jp",
             "--size", "20",
+            "--offset", "50",
             "--sort-by", "forward_dividend_yield",
             "--sort-asc",
         ])
         assert args.size == 20
+        assert args.offset == 50
         assert args.sort_by == "forward_dividend_yield"
         assert args.sort_asc is True
 

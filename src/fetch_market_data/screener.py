@@ -49,6 +49,7 @@ class ScreenParams:
 
     # Output control
     size: int = 50
+    offset: int = 0
     sort_by: str = "intradaymarketcap"
     sort_asc: bool = False
 
@@ -174,10 +175,13 @@ def run_screen(params: ScreenParams) -> dict[str, Any]:
         sortField=params.sort_by,
         sortAsc=params.sort_asc,
         size=params.size,
+        offset=params.offset,
+        count=True,
     )
 
     quotes: list[dict[str, Any]] = response.get("quotes", [])
     tickers = [q["symbol"] for q in quotes if "symbol" in q]
+    total: int | None = response.get("total")
 
     conditions: dict[str, Any] = {}
     if params.roe_min is not None:
@@ -203,12 +207,15 @@ def run_screen(params: ScreenParams) -> dict[str, Any]:
     if params.sector is not None:
         conditions["sector"] = params.sector
 
-    return {
+    result: dict[str, Any] = {
         "query": {
             "region": params.region,
             "exchange": params.exchange,
+            "offset": params.offset,
             "conditions": conditions,
         },
+        "total": total,
         "count": len(tickers),
         "tickers": tickers,
     }
+    return result

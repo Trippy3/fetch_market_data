@@ -132,7 +132,8 @@ fetch-market-data 7203.T 6758.T --price --pbr --roe
 | オプション | 説明 |
 |---|---|
 | `--revenue` | 売上高（直近年度） |
-| `--revenue-growth` | 売上高YoY成長率（小数） |
+| `--revenue-growth` | 売上高YoY成長率・年次財務諸表ベース（小数） |
+| `--revenue-growth-ttm` | 売上高TTM成長率・`screen-market-data` と同一ソース（小数） |
 | `--operating-income` | 営業利益（直近年度） |
 | `--operating-margin` | 営業利益率（小数） |
 | `--gross-margin` | 売上総利益率（小数） |
@@ -216,12 +217,14 @@ screen-market-data --exchange nyse --peg-max 1.0 --debt-ebitda-max 5
   "query": {
     "region": "jp",
     "exchange": null,
+    "offset": 0,
     "conditions": {
       "roe_min": 10.0,
       "div_yield_min": 1.5,
       "div_growth_years": 3
     }
   },
+  "total": 42,
   "count": 5,
   "tickers": ["7203.T", "8031.T", "8035.T", "8001.T", "8766.T"]
 }
@@ -242,12 +245,17 @@ screen-market-data --exchange nyse --peg-max 1.0 --debt-ebitda-max 5
 | `--insider-min PCT` | インサイダー保有比率下限（%） | JP / US |
 | `--market-cap-min VALUE` | 時価総額下限（JPY or USD） | JP / US |
 | `--sector SECTOR` | セクター指定（例: Technology） | JP / US |
-| `--size N` | 取得件数上限（デフォルト: 50） | JP / US |
+| `--size N` | 1ページあたりの取得件数上限（デフォルト: 50） | JP / US |
+| `--offset N` | ページネーション開始インデックス（デフォルト: 0） | JP / US |
 | `--sort-by FIELD` | ソートフィールド（デフォルト: intradaymarketcap） | JP / US |
 | `--sort-asc` | 昇順ソート（デフォルト: 降順） | JP / US |
 
 > **注意**: 東証プライム・スタンダード・グロースの市場区分指定は現時点では非対応です。
 > yfinance のスクリーナーAPIが市場区分を区別しないため、`--region jp` で東証全体を対象とします。
+
+> **データ乖離に注意**: `screen-market-data` と `fetch-market-data` では参照フィールドが異なる場合があります。
+> 例えば売上成長率は、screener が TTM ベース、`--revenue-growth` が年次財務諸表ベースのため乖離することがあります。
+> screener と同じ基準で比較する場合は `--revenue-growth-ttm` を使用してください。**数値が食い違った場合は fetch の値を優先してください。**
 
 ### 推奨ワークフロー
 
@@ -257,6 +265,18 @@ screen-market-data --region jp --roe-min 10 --div-yield-min 1.5 --div-growth-yea
 
 # Step 2: fetch-market-data で詳細指標を確認
 fetch-market-data 7203.T 8031.T --payout-ratio --equity-ratio --operating-margin --price-target
+```
+
+### ページネーション
+
+`total` フィールドでマッチ総件数を確認し、`--offset` でページをめくれます。
+
+```bash
+# 1ページ目（0〜49件目）
+screen-market-data --region jp --roe-min 10 --size 50 --offset 0
+
+# 2ページ目（50〜99件目）
+screen-market-data --region jp --roe-min 10 --size 50 --offset 50
 ```
 
 ## 開発

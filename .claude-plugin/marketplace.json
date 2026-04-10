@@ -9,7 +9,7 @@
         "repo": "Trippy3/fetch_market_data"
       },
       "description": "Stock market data and screener for US and Japanese equities via yfinance. fetch-market-data returns metrics by ticker; screen-market-data filters stocks by financial conditions and returns matching tickers.",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "category": "productivity"
     }
   ]

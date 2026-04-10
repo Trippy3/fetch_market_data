@@ -132,7 +132,8 @@ Outputs a JSON object keyed by ticker symbol to `stdout`.
 | Option | Description |
 |--------|-------------|
 | `--revenue` | Total revenue, latest annual |
-| `--revenue-growth` | Revenue YoY growth (decimal) |
+| `--revenue-growth` | Revenue YoY growth from annual statements (decimal) |
+| `--revenue-growth-ttm` | Revenue TTM growth — same source as `screen-market-data` screener (decimal) |
 | `--operating-income` | Operating income, latest annual |
 | `--operating-margin` | Operating margin (decimal) |
 | `--gross-margin` | Gross margin (decimal) |
@@ -216,12 +217,14 @@ screen-market-data --exchange nyse --peg-max 1.0 --debt-ebitda-max 5
   "query": {
     "region": "jp",
     "exchange": null,
+    "offset": 0,
     "conditions": {
       "roe_min": 10.0,
       "div_yield_min": 1.5,
       "div_growth_years": 3
     }
   },
+  "total": 42,
   "count": 5,
   "tickers": ["7203.T", "8031.T", "8035.T", "8001.T", "8766.T"]
 }
@@ -242,12 +245,17 @@ screen-market-data --exchange nyse --peg-max 1.0 --debt-ebitda-max 5
 | `--insider-min PCT` | Minimum insider ownership (%) | JP / US |
 | `--market-cap-min VALUE` | Minimum market cap (JPY or USD) | JP / US |
 | `--sector SECTOR` | Sector filter (e.g. Technology) | JP / US |
-| `--size N` | Maximum number of results (default: 50) | JP / US |
+| `--size N` | Maximum results per page (default: 50) | JP / US |
+| `--offset N` | Starting index for pagination (default: 0) | JP / US |
 | `--sort-by FIELD` | Sort field (default: intradaymarketcap) | JP / US |
 | `--sort-asc` | Sort ascending (default: descending) | JP / US |
 
 > **Note**: Filtering by TSE market segment (Prime / Standard / Growth) is not currently supported.
 > The yfinance screener API does not distinguish between segments; `--region jp` targets the entire TSE.
+
+> **Data discrepancy warning**: `screen-market-data` and `fetch-market-data` may reference different fields for the same concept.
+> For example, revenue growth in the screener is TTM-based, while `--revenue-growth` uses annual financial statements — these can diverge.
+> Use `--revenue-growth-ttm` to compare against screener results on the same basis. **When values conflict, treat the fetch value as authoritative.**
 
 ### Recommended Workflow
 
@@ -257,6 +265,18 @@ screen-market-data --region jp --roe-min 10 --div-yield-min 1.5 --div-growth-yea
 
 # Step 2: fetch detailed metrics with fetch-market-data
 fetch-market-data 7203.T 8031.T --payout-ratio --equity-ratio --operating-margin --price-target
+```
+
+### Pagination
+
+Use the `total` field to see the total match count, then page through results with `--offset`.
+
+```bash
+# Page 1 (results 0–49)
+screen-market-data --region jp --roe-min 10 --size 50 --offset 0
+
+# Page 2 (results 50–99)
+screen-market-data --region jp --roe-min 10 --size 50 --offset 50
 ```
 
 ## Development

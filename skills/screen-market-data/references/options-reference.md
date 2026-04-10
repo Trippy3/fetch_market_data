@@ -82,7 +82,8 @@ Industrials, Communication Services, Energy, Basic Materials, Utilities, Real Es
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `--size N` | `50` | Maximum number of results to return |
+| `--size N` | `50` | Maximum number of results per page |
+| `--offset N` | `0` | Starting index for pagination |
 | `--sort-by FIELD` | `intradaymarketcap` | EquityQuery field to sort by (see below) |
 | `--sort-asc` | `false` (descending) | Sort ascending when flag is set |
 

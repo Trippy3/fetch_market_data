@@ -37,7 +37,8 @@ Default (no flags): `--price`
 | Option | Description | Return type | Source speed |
 |--------|-------------|-------------|--------------|
 | `--revenue` | Total revenue, latest annual | int | Slow |
-| `--revenue-growth` | Revenue YoY growth (decimal) | float | Slow |
+| `--revenue-growth` | Revenue YoY growth from annual statements (decimal) | float | Slow |
+| `--revenue-growth-ttm` | Revenue TTM growth from `info` — same source as `screen-market-data` screener (decimal) | float | Medium |
 | `--operating-income` | Operating income, latest annual | int | Slow |
 | `--operating-margin` | Operating margin (decimal) | float | Slow |
 | `--gross-margin` | Gross margin (decimal) | float | Slow |
@@ -103,6 +104,7 @@ Default (no flags): `--price`
 ## Notes
 
 - **Japanese stocks** (`.T` suffix): analyst metrics (`--ratings`, `--price-target`, `--eps-estimate`, `--revenue-estimate`) typically return `null` — Yahoo Finance analyst coverage is US-centric.
+- **`--revenue-growth` vs `--revenue-growth-ttm`**: `--revenue-growth` computes YoY from annual financial statements (two most recent fiscal years). `--revenue-growth-ttm` uses `info["revenueGrowth"]`, a trailing-twelve-month figure matching the EquityQuery field used by `screen-market-data`. Use `--revenue-growth-ttm` when comparing against screener results.
 - **Source speed** indicates relative latency. Slow sources make additional HTTP requests to Yahoo Finance. Combine slow-source metrics together to minimise total fetches (each source is fetched at most once per ticker per call).
 - `--debt-ebitda` uses Operating Income + D&A for EBITDA. If D&A is unavailable, Operating Income alone is used.
 - `--buyback` reflects cashflow statement values and is typically **negative** (cash outflow). Take `abs()` when summing with dividends.

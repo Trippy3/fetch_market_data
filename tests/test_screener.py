@@ -158,7 +158,8 @@ _MOCK_RESPONSE = {
         {"symbol": "4776.T", "shortName": "CYBOZU INC"},
         {"symbol": "6036.T", "shortName": "KEEPER TECHNICAL"},
         {"symbol": "3064.T", "shortName": "MONOTARO CO.LTD"},
-    ]
+    ],
+    "total": 42,
 }
 
 
@@ -171,6 +172,14 @@ class TestRunScreen:
 
         assert result["count"] == 3
         assert result["tickers"] == ["4776.T", "6036.T", "3064.T"]
+        assert result["total"] == 42
+
+    @patch("fetch_market_data.screener.yf.screen")
+    def test_total_none_when_absent(self, mock_screen: MagicMock):
+        mock_screen.return_value = {"quotes": []}
+        params = ScreenParams(region="jp")
+        result = run_screen(params)
+        assert result["total"] is None
 
     @patch("fetch_market_data.screener.yf.screen")
     def test_query_metadata_region(self, mock_screen: MagicMock):
@@ -205,7 +214,7 @@ class TestRunScreen:
     @patch("fetch_market_data.screener.yf.screen")
     def test_screen_called_with_correct_args(self, mock_screen: MagicMock):
         mock_screen.return_value = _MOCK_RESPONSE
-        params = ScreenParams(region="jp", size=10, sort_by="forward_dividend_yield", sort_asc=True)
+        params = ScreenParams(region="jp", size=10, offset=50, sort_by="forward_dividend_yield", sort_asc=True)
         run_screen(params)
 
         mock_screen.assert_called_once()
@@ -213,6 +222,15 @@ class TestRunScreen:
         assert kwargs["sortField"] == "forward_dividend_yield"
         assert kwargs["sortAsc"] is True
         assert kwargs["size"] == 10
+        assert kwargs["offset"] == 50
+        assert kwargs["count"] is True
+
+    @patch("fetch_market_data.screener.yf.screen")
+    def test_offset_in_query_metadata(self, mock_screen: MagicMock):
+        mock_screen.return_value = {"quotes": [], "total": 100}
+        params = ScreenParams(region="jp", offset=25)
+        result = run_screen(params)
+        assert result["query"]["offset"] == 25
 
     @patch("fetch_market_data.screener.yf.screen")
     def test_fcf_positive_in_conditions(self, mock_screen: MagicMock):
