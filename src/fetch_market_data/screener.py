@@ -1,14 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+import dataclasses
+from dataclasses import dataclass
 from typing import Any
 
 import yfinance as yf
 from yfinance import EquityQuery
-
-# ---------------------------------------------------------------------------
-# Exchange code mapping
-# ---------------------------------------------------------------------------
 
 _EXCHANGE_CODES: dict[str, list[str]] = {
     "nasdaq": ["NMS"],
@@ -21,9 +18,10 @@ _REGION_CODES: dict[str, str] = {
     "us": "us",
 }
 
-# ---------------------------------------------------------------------------
-# Screen parameters dataclass
-# ---------------------------------------------------------------------------
+# Non-filter fields excluded from the conditions output dict
+_NON_FILTER_FIELDS: frozenset[str] = frozenset(
+    {"region", "exchange", "size", "offset", "sort_by", "sort_asc"}
+)
 
 
 @dataclass
@@ -52,14 +50,6 @@ class ScreenParams:
     offset: int = 0
     sort_by: str = "intradaymarketcap"
     sort_asc: bool = False
-
-    # Collected unknown conditions (for future extension)
-    extra: dict[str, Any] = field(default_factory=dict)
-
-
-# ---------------------------------------------------------------------------
-# Query builder
-# ---------------------------------------------------------------------------
 
 
 def _build_query(params: ScreenParams) -> EquityQuery:
@@ -153,11 +143,6 @@ def _build_query(params: ScreenParams) -> EquityQuery:
     return EquityQuery("and", conditions)
 
 
-# ---------------------------------------------------------------------------
-# Public API
-# ---------------------------------------------------------------------------
-
-
 def run_screen(params: ScreenParams) -> dict[str, Any]:
     """Execute screening and return structured result dict.
 
@@ -183,29 +168,14 @@ def run_screen(params: ScreenParams) -> dict[str, Any]:
     tickers = [q["symbol"] for q in quotes if "symbol" in q]
     total: int | None = response.get("total")
 
-    conditions: dict[str, Any] = {}
-    if params.roe_min is not None:
-        conditions["roe_min"] = params.roe_min
-    if params.div_yield_min is not None:
-        conditions["div_yield_min"] = params.div_yield_min
-    if params.div_growth_years is not None:
-        conditions["div_growth_years"] = params.div_growth_years
-    if params.revenue_growth_min is not None:
-        conditions["revenue_growth_min"] = params.revenue_growth_min
-    if params.debt_ebitda_max is not None:
-        conditions["debt_ebitda_max"] = params.debt_ebitda_max
-    if params.fcf_positive:
-        conditions["fcf_positive"] = True
-    if params.gross_margin_min is not None:
-        conditions["gross_margin_min"] = params.gross_margin_min
-    if params.peg_max is not None:
-        conditions["peg_max"] = params.peg_max
-    if params.insider_min is not None:
-        conditions["insider_min"] = params.insider_min
-    if params.market_cap_min is not None:
-        conditions["market_cap_min"] = params.market_cap_min
-    if params.sector is not None:
-        conditions["sector"] = params.sector
+    # Collect only explicitly-set filter values (None and False are "unset")
+    conditions: dict[str, Any] = {
+        f.name: val
+        for f in dataclasses.fields(params)
+        if f.name not in _NON_FILTER_FIELDS
+        and (val := getattr(params, f.name)) is not None
+        and val is not False
+    }
 
     result: dict[str, Any] = {
         "query": {
