@@ -6,7 +6,6 @@ import pytest
 
 from fetch_market_data.screener import ScreenParams, _build_query, run_screen
 
-
 # ---------------------------------------------------------------------------
 # _build_query tests
 # ---------------------------------------------------------------------------

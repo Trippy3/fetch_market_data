@@ -6,7 +6,6 @@ from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pandas as pd
-import pytest
 
 from fetch_market_data.fetcher import (
     _cross_debt_ebitda,
@@ -19,7 +18,6 @@ from fetch_market_data.fetcher import (
     _total_return_ratio,
     fetch_metrics,
 )
-
 
 # ---------------------------------------------------------------------------
 # Mock helpers
