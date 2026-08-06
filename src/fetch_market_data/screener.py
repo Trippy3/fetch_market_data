@@ -29,8 +29,8 @@ class ScreenParams:
     """Parameters for equity screening."""
 
     # Market selection (one of region or exchange must be set)
-    region: str | None = None          # "jp" or "us"
-    exchange: str | None = None        # "nasdaq", "nyse", "us"
+    region: str | None = None  # "jp" or "us"
+    exchange: str | None = None  # "nasdaq", "nyse", "us"
 
     # Filter conditions
     roe_min: float | None = None
@@ -61,16 +61,14 @@ def _build_query(params: ScreenParams) -> EquityQuery:
         codes = _EXCHANGE_CODES.get(params.exchange.lower())
         if codes is None:
             raise ValueError(
-                f"Unknown exchange '{params.exchange}'. "
-                f"Choices: {', '.join(_EXCHANGE_CODES)}"
+                f"Unknown exchange '{params.exchange}'. Choices: {', '.join(_EXCHANGE_CODES)}"
             )
         conditions.append(EquityQuery("is-in", ["exchange", *codes]))
     elif params.region is not None:
         region_code = _REGION_CODES.get(params.region.lower())
         if region_code is None:
             raise ValueError(
-                f"Unknown region '{params.region}'. "
-                f"Choices: {', '.join(_REGION_CODES)}"
+                f"Unknown region '{params.region}'. Choices: {', '.join(_REGION_CODES)}"
             )
         conditions.append(EquityQuery("eq", ["region", region_code]))
     else:
@@ -82,9 +80,7 @@ def _build_query(params: ScreenParams) -> EquityQuery:
 
     # --- Profitability ---
     if params.roe_min is not None:
-        conditions.append(
-            EquityQuery("gte", ["returnonequity.lasttwelvemonths", params.roe_min])
-        )
+        conditions.append(EquityQuery("gte", ["returnonequity.lasttwelvemonths", params.roe_min]))
     if params.gross_margin_min is not None:
         conditions.append(
             EquityQuery("gte", ["grossprofitmargin.lasttwelvemonths", params.gross_margin_min])
@@ -92,9 +88,7 @@ def _build_query(params: ScreenParams) -> EquityQuery:
 
     # --- Dividend ---
     if params.div_yield_min is not None:
-        conditions.append(
-            EquityQuery("gte", ["forward_dividend_yield", params.div_yield_min])
-        )
+        conditions.append(EquityQuery("gte", ["forward_dividend_yield", params.div_yield_min]))
     if params.div_growth_years is not None:
         conditions.append(
             EquityQuery(
@@ -114,9 +108,7 @@ def _build_query(params: ScreenParams) -> EquityQuery:
 
     # --- Cash flow ---
     if params.fcf_positive:
-        conditions.append(
-            EquityQuery("gt", ["leveredfreecashflow.lasttwelvemonths", 0])
-        )
+        conditions.append(EquityQuery("gt", ["leveredfreecashflow.lasttwelvemonths", 0]))
 
     # --- Leverage ---
     if params.debt_ebitda_max is not None:
@@ -134,9 +126,7 @@ def _build_query(params: ScreenParams) -> EquityQuery:
 
     # --- Market cap ---
     if params.market_cap_min is not None:
-        conditions.append(
-            EquityQuery("gte", ["intradaymarketcap", params.market_cap_min])
-        )
+        conditions.append(EquityQuery("gte", ["intradaymarketcap", params.market_cap_min]))
 
     if len(conditions) == 1:
         return conditions[0]

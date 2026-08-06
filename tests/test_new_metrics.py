@@ -115,11 +115,13 @@ class TestToJsonSafe:
 
     def test_datetime_date_to_isoformat(self):
         import datetime
+
         d = datetime.date(2026, 5, 7)
         assert _to_json_safe(d) == "2026-05-07"
 
     def test_datetime_datetime_to_isoformat(self):
         import datetime
+
         dt = datetime.datetime(2026, 5, 7, 14, 30, 0)
         assert _to_json_safe(dt) == "2026-05-07T14:30:00"
 
@@ -433,7 +435,9 @@ class TestNewMetricsIntegration:
     @patch("fetch_market_data.fetcher.yf.Tickers")
     def test_weekly_change(self, mock_cls):
         ticker = _make_ticker()
-        ticker.history = MagicMock(return_value=_make_history_df([100.0, 102.0, 98.0, 105.0, 110.0]))
+        ticker.history = MagicMock(
+            return_value=_make_history_df([100.0, 102.0, 98.0, 105.0, 110.0])
+        )
         mock_cls.return_value = _make_tickers({"AAPL": ticker})
         result = fetch_metrics(["AAPL"], ["weekly-change"])
         assert abs(result["AAPL"]["weekly-change"] - 0.1) < 1e-4

@@ -308,9 +308,7 @@ _METRICS: dict[str, MetricDef] = {
     "weekly-change": MetricDef(("history_5d",), lambda d: _history_change(d, pct=True)),
     "monthly-change": MetricDef(("history_1mo",), lambda d: _history_change(d, pct=True)),
     # --- Group B: income statement calculations ---
-    "revenue-growth": MetricDef(
-        ("income_stmt",), lambda d: _stmt_yoy_growth(d, "Total Revenue")
-    ),
+    "revenue-growth": MetricDef(("income_stmt",), lambda d: _stmt_yoy_growth(d, "Total Revenue")),
     # TTM revenue growth from info (same data source as screen-market-data's EquityQuery field
     # totalrevenues1yrgrowth.lasttwelvemonths — use this for apples-to-apples comparison)
     "revenue-growth-ttm": MetricDef(("info",), lambda d: d.get("revenueGrowth")),
@@ -335,9 +333,7 @@ _METRICS: dict[str, MetricDef] = {
     # --- Group E: shareholder return calculations ---
     "dividend-history": MetricDef(("dividends",), lambda d: d),
     "dividend-growth": MetricDef(("dividends",), _dividend_growth),
-    "total-return-ratio": MetricDef(
-        ("dividends", "cashflow", "income_stmt"), _total_return_ratio
-    ),
+    "total-return-ratio": MetricDef(("dividends", "cashflow", "income_stmt"), _total_return_ratio),
     # --- Group F: structured analyst / event data ---
     "guidance": MetricDef(("calendar",), lambda d: d),
     "eps-estimate": MetricDef(("earnings_estimate",), lambda d: d),
