@@ -213,7 +213,9 @@ class TestRunScreen:
     @patch("fetch_market_data.screener.yf.screen")
     def test_screen_called_with_correct_args(self, mock_screen: MagicMock):
         mock_screen.return_value = _MOCK_RESPONSE
-        params = ScreenParams(region="jp", size=10, offset=50, sort_by="forward_dividend_yield", sort_asc=True)
+        params = ScreenParams(
+            region="jp", size=10, offset=50, sort_by="forward_dividend_yield", sort_asc=True
+        )
         run_screen(params)
 
         mock_screen.assert_called_once()

@@ -7,7 +7,7 @@ authors = [
     { name = "trippy" }
 ]
 requires-python = ">=3.12"
-dependencies = ["yfinance>=0.2"]
+dependencies = ["yfinance>=1.5.2"]
 
 [project.scripts]
 fetch-market-data = "fetch_market_data.cli:main"

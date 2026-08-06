@@ -31,7 +31,9 @@ def _make_info(**kwargs):
         "priceToSalesTrailing12Months": 8.5,
         "enterpriseToEbitda": 22.0,
         "pegRatio": 2.1,
-        "dividendYield": 0.0055,
+        # yfinance returns dividendYield as a percent (0.55 == 0.55%), unlike every
+        # other ratio field in info which is already a decimal.
+        "dividendYield": 0.55,
         "payoutRatio": 0.15,
         "trailingEps": 6.43,
         "forwardEps": 7.20,
@@ -171,8 +173,32 @@ class TestInfoMetrics:
     def test_dividend_metrics(self, mock_cls):
         mock_cls.return_value = _make_tickers({"AAPL": _make_ticker()})
         result = fetch_metrics(["AAPL"], ["dividend-yield", "payout-ratio"])
+        # dividendYield arrives as a percent and is normalised to a decimal;
+        # payoutRatio is already a decimal upstream and must pass through untouched.
         assert result["AAPL"]["dividend-yield"] == round(0.0055, 4)
         assert result["AAPL"]["payout-ratio"] == round(0.15, 4)
+
+    @patch("fetch_market_data.fetcher.yf.Tickers")
+    def test_dividend_yield_normalised_from_percent(self, mock_cls):
+        """Real-world percent values convert to the documented decimal convention."""
+        mock_cls.return_value = _make_tickers(
+            {
+                "7203.T": _make_ticker(info=_make_info(dividendYield=3.43)),
+                "MSFT": _make_ticker(info=_make_info(dividendYield=0.75)),
+            }
+        )
+        result = fetch_metrics(["7203.T", "MSFT"], ["dividend-yield"])
+        assert result["7203.T"]["dividend-yield"] == 0.0343
+        assert result["MSFT"]["dividend-yield"] == 0.0075
+
+    @patch("fetch_market_data.fetcher.yf.Tickers")
+    def test_dividend_yield_missing_stays_none(self, mock_cls):
+        """A non-dividend payer reports null rather than 0.0."""
+        mock_cls.return_value = _make_tickers(
+            {"NVDA": _make_ticker(info=_make_info(dividendYield=None))}
+        )
+        result = fetch_metrics(["NVDA"], ["dividend-yield"])
+        assert result["NVDA"]["dividend-yield"] is None
 
     @patch("fetch_market_data.fetcher.yf.Tickers")
     def test_eps_metrics(self, mock_cls):

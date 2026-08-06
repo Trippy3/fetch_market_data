@@ -75,6 +75,18 @@ def _stmt_ratio(df: Any, numerator_row: str, denominator_row: str) -> Any:
     return num / den
 
 
+def _pct_to_ratio(value: Any) -> Any:
+    """Convert a percent-scaled value to the decimal convention used by every metric.
+
+    yfinance reports ``info["dividendYield"]`` as a percent (``3.43`` == 3.43%), while
+    every other ratio field it exposes (``payoutRatio``, ``returnOnEquity``, ...) is
+    already a decimal. Normalise here so callers see one consistent unit.
+    """
+    if value is None:
+        return None
+    return value / 100
+
+
 def _history_change(df: Any, pct: bool = False) -> Any:
     """Compute price change between first and last Close in a history DataFrame.
 
@@ -253,7 +265,7 @@ _METRICS: dict[str, MetricDef] = {
     "psr": MetricDef(("info",), lambda d: d.get("priceToSalesTrailing12Months")),
     "ev-ebitda": MetricDef(("info",), lambda d: d.get("enterpriseToEbitda")),
     "peg": MetricDef(("info",), lambda d: d.get("pegRatio")),
-    "dividend-yield": MetricDef(("info",), lambda d: d.get("dividendYield")),
+    "dividend-yield": MetricDef(("info",), lambda d: _pct_to_ratio(d.get("dividendYield"))),
     "payout-ratio": MetricDef(("info",), lambda d: d.get("payoutRatio")),
     "trailing-eps": MetricDef(("info",), lambda d: d.get("trailingEps")),
     "forward-eps": MetricDef(("info",), lambda d: d.get("forwardEps")),
@@ -296,9 +308,7 @@ _METRICS: dict[str, MetricDef] = {
     "weekly-change": MetricDef(("history_5d",), lambda d: _history_change(d, pct=True)),
     "monthly-change": MetricDef(("history_1mo",), lambda d: _history_change(d, pct=True)),
     # --- Group B: income statement calculations ---
-    "revenue-growth": MetricDef(
-        ("income_stmt",), lambda d: _stmt_yoy_growth(d, "Total Revenue")
-    ),
+    "revenue-growth": MetricDef(("income_stmt",), lambda d: _stmt_yoy_growth(d, "Total Revenue")),
     # TTM revenue growth from info (same data source as screen-market-data's EquityQuery field
     # totalrevenues1yrgrowth.lasttwelvemonths — use this for apples-to-apples comparison)
     "revenue-growth-ttm": MetricDef(("info",), lambda d: d.get("revenueGrowth")),
@@ -323,9 +333,7 @@ _METRICS: dict[str, MetricDef] = {
     # --- Group E: shareholder return calculations ---
     "dividend-history": MetricDef(("dividends",), lambda d: d),
     "dividend-growth": MetricDef(("dividends",), _dividend_growth),
-    "total-return-ratio": MetricDef(
-        ("dividends", "cashflow", "income_stmt"), _total_return_ratio
-    ),
+    "total-return-ratio": MetricDef(("dividends", "cashflow", "income_stmt"), _total_return_ratio),
     # --- Group F: structured analyst / event data ---
     "guidance": MetricDef(("calendar",), lambda d: d),
     "eps-estimate": MetricDef(("earnings_estimate",), lambda d: d),

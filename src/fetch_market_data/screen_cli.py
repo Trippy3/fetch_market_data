@@ -44,42 +44,86 @@ Examples:
 
     # --- Filter conditions ---
     filt = parser.add_argument_group("filter conditions")
-    filt.add_argument("--roe-min", type=float, metavar="PCT",
-                      help="Minimum ROE %% (e.g. 10 for 10%%%%)")
-    filt.add_argument("--div-yield-min", type=float, metavar="PCT",
-                      help="Minimum forward dividend yield %% (e.g. 1.5)")
-    filt.add_argument("--div-growth-years", type=int, metavar="N",
-                      help="Minimum consecutive years of dividend growth")
-    filt.add_argument("--revenue-growth-min", type=float, metavar="PCT",
-                      help="Minimum YoY revenue growth %% (e.g. 3)")
-    filt.add_argument("--debt-ebitda-max", type=float, metavar="RATIO",
-                      help="Maximum total debt / EBITDA ratio (e.g. 5)")
-    filt.add_argument("--fcf-positive", action="store_true",
-                      help="Require positive free cash flow (levered)")
-    filt.add_argument("--gross-margin-min", type=float, metavar="PCT",
-                      help="Minimum gross profit margin %% (e.g. 50)")
-    filt.add_argument("--peg-max", type=float, metavar="RATIO",
-                      help="Maximum PEG ratio (5-year, e.g. 1.0)")
-    filt.add_argument("--insider-min", type=float, metavar="PCT",
-                      help="Minimum insider ownership %% (e.g. 5)")
-    filt.add_argument("--market-cap-min", type=float, metavar="VALUE",
-                      help="Minimum market cap in base currency (JPY or USD)")
-    filt.add_argument("--sector", metavar="SECTOR",
-                      help=(
-                          "Sector filter (e.g. Technology, Healthcare, Financials). "
-                          "Use exact Yahoo Finance sector name."
-                      ))
+    filt.add_argument(
+        "--roe-min", type=float, metavar="PCT", help="Minimum ROE %% (e.g. 10 for 10%%%%)"
+    )
+    filt.add_argument(
+        "--div-yield-min",
+        type=float,
+        metavar="PCT",
+        help="Minimum forward dividend yield %% (e.g. 1.5)",
+    )
+    filt.add_argument(
+        "--div-growth-years",
+        type=int,
+        metavar="N",
+        help="Minimum consecutive years of dividend growth",
+    )
+    filt.add_argument(
+        "--revenue-growth-min",
+        type=float,
+        metavar="PCT",
+        help="Minimum YoY revenue growth %% (e.g. 3)",
+    )
+    filt.add_argument(
+        "--debt-ebitda-max",
+        type=float,
+        metavar="RATIO",
+        help="Maximum total debt / EBITDA ratio (e.g. 5)",
+    )
+    filt.add_argument(
+        "--fcf-positive", action="store_true", help="Require positive free cash flow (levered)"
+    )
+    filt.add_argument(
+        "--gross-margin-min",
+        type=float,
+        metavar="PCT",
+        help="Minimum gross profit margin %% (e.g. 50)",
+    )
+    filt.add_argument(
+        "--peg-max", type=float, metavar="RATIO", help="Maximum PEG ratio (5-year, e.g. 1.0)"
+    )
+    filt.add_argument(
+        "--insider-min", type=float, metavar="PCT", help="Minimum insider ownership %% (e.g. 5)"
+    )
+    filt.add_argument(
+        "--market-cap-min",
+        type=float,
+        metavar="VALUE",
+        help="Minimum market cap in base currency (JPY or USD)",
+    )
+    filt.add_argument(
+        "--sector",
+        metavar="SECTOR",
+        help=(
+            "Sector filter (e.g. Technology, Healthcare, Financials). "
+            "Use exact Yahoo Finance sector name."
+        ),
+    )
 
     # --- Output control ---
     out = parser.add_argument_group("output control")
-    out.add_argument("--size", type=int, default=50, metavar="N",
-                     help="Maximum number of results to return (default: 50)")
-    out.add_argument("--offset", type=int, default=0, metavar="N",
-                     help="Starting index for pagination (default: 0)")
-    out.add_argument("--sort-by", default="intradaymarketcap", metavar="FIELD",
-                     help="EquityQuery field to sort by (default: intradaymarketcap)")
-    out.add_argument("--sort-asc", action="store_true",
-                     help="Sort ascending (default: descending)")
+    out.add_argument(
+        "--size",
+        type=int,
+        default=50,
+        metavar="N",
+        help="Maximum number of results to return (default: 50)",
+    )
+    out.add_argument(
+        "--offset",
+        type=int,
+        default=0,
+        metavar="N",
+        help="Starting index for pagination (default: 0)",
+    )
+    out.add_argument(
+        "--sort-by",
+        default="intradaymarketcap",
+        metavar="FIELD",
+        help="EquityQuery field to sort by (default: intradaymarketcap)",
+    )
+    out.add_argument("--sort-asc", action="store_true", help="Sort ascending (default: descending)")
 
     return parser
 

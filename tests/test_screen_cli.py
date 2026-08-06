@@ -43,20 +43,33 @@ class TestParser:
             self.parser.parse_args([])
 
     def test_filter_options(self):
-        args = self.parser.parse_args([
-            "--region", "jp",
-            "--roe-min", "10",
-            "--div-yield-min", "1.5",
-            "--div-growth-years", "3",
-            "--revenue-growth-min", "3",
-            "--debt-ebitda-max", "5",
-            "--fcf-positive",
-            "--gross-margin-min", "50",
-            "--peg-max", "1.0",
-            "--insider-min", "5",
-            "--market-cap-min", "1000000000",
-            "--sector", "Technology",
-        ])
+        args = self.parser.parse_args(
+            [
+                "--region",
+                "jp",
+                "--roe-min",
+                "10",
+                "--div-yield-min",
+                "1.5",
+                "--div-growth-years",
+                "3",
+                "--revenue-growth-min",
+                "3",
+                "--debt-ebitda-max",
+                "5",
+                "--fcf-positive",
+                "--gross-margin-min",
+                "50",
+                "--peg-max",
+                "1.0",
+                "--insider-min",
+                "5",
+                "--market-cap-min",
+                "1000000000",
+                "--sector",
+                "Technology",
+            ]
+        )
         assert args.roe_min == 10.0
         assert args.div_yield_min == 1.5
         assert args.div_growth_years == 3
@@ -77,13 +90,19 @@ class TestParser:
         assert args.sort_asc is False
 
     def test_output_overrides(self):
-        args = self.parser.parse_args([
-            "--region", "jp",
-            "--size", "20",
-            "--offset", "50",
-            "--sort-by", "forward_dividend_yield",
-            "--sort-asc",
-        ])
+        args = self.parser.parse_args(
+            [
+                "--region",
+                "jp",
+                "--size",
+                "20",
+                "--offset",
+                "50",
+                "--sort-by",
+                "forward_dividend_yield",
+                "--sort-asc",
+            ]
+        )
         assert args.size == 20
         assert args.offset == 50
         assert args.sort_by == "forward_dividend_yield"
@@ -115,13 +134,19 @@ class TestMain:
     @patch("fetch_market_data.screen_cli.run_screen")
     def test_passes_params_correctly(self, mock_run: MagicMock, capsys):
         mock_run.return_value = _MOCK_RESULT
-        with patch("sys.argv", [
-            "screen-market-data",
-            "--exchange", "nasdaq",
-            "--gross-margin-min", "50",
-            "--fcf-positive",
-            "--size", "20",
-        ]):
+        with patch(
+            "sys.argv",
+            [
+                "screen-market-data",
+                "--exchange",
+                "nasdaq",
+                "--gross-margin-min",
+                "50",
+                "--fcf-positive",
+                "--size",
+                "20",
+            ],
+        ):
             main()
 
         called_params = mock_run.call_args[0][0]
