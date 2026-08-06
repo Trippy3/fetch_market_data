@@ -75,6 +75,18 @@ def _stmt_ratio(df: Any, numerator_row: str, denominator_row: str) -> Any:
     return num / den
 
 
+def _pct_to_ratio(value: Any) -> Any:
+    """Convert a percent-scaled value to the decimal convention used by every metric.
+
+    yfinance reports ``info["dividendYield"]`` as a percent (``3.43`` == 3.43%), while
+    every other ratio field it exposes (``payoutRatio``, ``returnOnEquity``, ...) is
+    already a decimal. Normalise here so callers see one consistent unit.
+    """
+    if value is None:
+        return None
+    return value / 100
+
+
 def _history_change(df: Any, pct: bool = False) -> Any:
     """Compute price change between first and last Close in a history DataFrame.
 
@@ -253,7 +265,7 @@ _METRICS: dict[str, MetricDef] = {
     "psr": MetricDef(("info",), lambda d: d.get("priceToSalesTrailing12Months")),
     "ev-ebitda": MetricDef(("info",), lambda d: d.get("enterpriseToEbitda")),
     "peg": MetricDef(("info",), lambda d: d.get("pegRatio")),
-    "dividend-yield": MetricDef(("info",), lambda d: d.get("dividendYield")),
+    "dividend-yield": MetricDef(("info",), lambda d: _pct_to_ratio(d.get("dividendYield"))),
     "payout-ratio": MetricDef(("info",), lambda d: d.get("payoutRatio")),
     "trailing-eps": MetricDef(("info",), lambda d: d.get("trailingEps")),
     "forward-eps": MetricDef(("info",), lambda d: d.get("forwardEps")),
